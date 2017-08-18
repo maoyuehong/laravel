@@ -1,0 +1,23 @@
+mysql 5.5 开启慢日志slow log的方法(log_slow_queries)
+1.MySQL 5.5命令行里面
+复制代码 代码如下:
+set global log_slow_queries = on;                               # 开启慢日志
+set [session|global]  long_query_time =0.2               # 设置时间.精确的毫秒
+set global  log_queries_not_using_indexes = on;   # 设置无索引的查询
+2.查看存放日志的形式
+mysql> show variables like 'log_output';
+这个FILE是指以文件的形式存放. 
+如果是TABLE就是存放到系统表中. mysql.slow_log表中. 
+使用set global log_output='table';变量更改 
+3.查看慢日志文件的存放位置（以文件形式存放时）
+4.使用mysqldumpslow命令查看慢日志.
+详细的可应用mysqldumpslow -help查询.
+参数说明:
+-s,是表示按照何种方式排序,c、t、l、r分别是按照记录次数、时间、查询时间、返回的记录数来排序（从大到小）,ac、at、al、ar表示相应的倒叙.
+-t, 是top n的意思,即为返回前面多少条数据.
+-g,后边可以写一个正则匹配模式,大小写不敏感.
+mysqldumpslow -s c -t 10 host-slow.log
+列出返回记录集最多的10个sql语句
+mysqldumpslow -s r -t 10 host-slow.log
+按照时间返回前10条里面含有左连接的sql语句
+mysqldumpslow -s t -t 10 -g "left join" host-slow.log
